@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include "mymalloc.h"
+#include "malloc.h"
 
 #define FALSE 0
 #define TRUE 1
