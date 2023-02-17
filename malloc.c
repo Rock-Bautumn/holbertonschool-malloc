@@ -54,6 +54,21 @@ void *add_alloc(void *heapstart, size_t size_to_alloc)
 		this_block = (block_t *) ((char *) heapstart + traversedbytes);
 		while (traversedbytes + size_to_alloc + 16 > pagedbytes)
 		{
+			if (traversedbytes + this_block->allocsize == pagedbytes)
+			{
+				if (this_block->inuse == ISFREE)
+					this_block->allocsize += pagesize;
+				else
+				{
+					if (sbrk(pagesize) == (void *) -1)
+						return (NULL);
+					temp_size = pagedbytes;
+					pagedbytes += pagesize;
+					next_block = (block_t *) ((char *) heapstart + pagedbytes);
+					next_block->inuse = ISFREE;
+					next_block->allocsize = pagesize;
+				}
+			}
 			pagedbytes += pagesize;
 			if (sbrk(pagesize) == (void *) -1)
 				return (NULL);
