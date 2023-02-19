@@ -10,7 +10,12 @@
 
 int _free(void *ptr)
 {
-	block_t *this_block = (block_t *) ((char *) ptr - sizeof(block_t));
+	block_t *this_block;
+	
+	if (ptr)
+		this_block = (block_t *) ((char *) ptr - sizeof(block_t));
+	else
+		return (EXIT_FAILURE);
 
 	this_block->inuse = ISFREE;
 
