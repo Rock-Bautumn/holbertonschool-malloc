@@ -25,7 +25,9 @@ int main()
 	printf("string2 = %s\n", string2);
 	printf("string3 = %s\n", string3);
 
-
+	_free(string);
+	_free(string2);
+	_free(string3);
 
 
 	return (EXIT_SUCCESS);

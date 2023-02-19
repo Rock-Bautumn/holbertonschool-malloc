@@ -4,13 +4,6 @@
 #include <stdio.h>
 #include "malloc.h"
 
-#define FALSE 0
-#define TRUE 1
-#define ISFREE 0
-#define ISALLOC 1
-#define ALIGN 8
-
-
 /* FIX ME */
 #define ROUND_UP(X) ((X) + ALIGN - ((X) % ALIGN))
 
@@ -19,14 +12,14 @@ static size_t pagedbytes = 0;
 
 void *_malloc(size_t size)
 {
-	static char isSetup = FALSE;
+	static char isSetUp = FALSE;
 	static void *heapstart = NULL;
 	void *retptr;
 	block_t *this_block;
 
-	if (!isSetup)
+	if (!isSetUp)
 	{
-		isSetup = TRUE;
+		isSetUp = TRUE;
 		pagesize = (size_t) sysconf(_SC_PAGESIZE);
 		pagedbytes = pagesize;
 		heapstart = sbrk(0);
