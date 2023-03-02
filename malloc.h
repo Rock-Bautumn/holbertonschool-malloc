@@ -20,5 +20,11 @@ typedef struct block_header
     size_t allocsize;
 } block_t;
 
+typedef struct sblock_header
+{
+    unsigned int inuse;
+    unsigned int allocsize;
+} sblock_t;
+
 
 #endif /* _MYMALLOC_ */

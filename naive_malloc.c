@@ -15,7 +15,7 @@ void *naive_malloc(size_t size)
 	static char isSetUp = FALSE;
 	static void *heapstart = NULL;
 	void *retptr;
-	block_t *this_block;
+	sblock_t *this_block;
 
 	if (!isSetUp)
 	{
@@ -38,8 +38,8 @@ void *naive_malloc(size_t size)
 void *add_alloc(void *heapstart, size_t size_to_alloc)
 {
 	size_t traversedbytes = 0;
-	block_t *this_block;
-	block_t *next_block;
+	sblock_t *this_block;
+	sblock_t *next_block;
 	size_t temp_size;
 	static int i = 0;
 	int j = 0;
@@ -47,9 +47,9 @@ void *add_alloc(void *heapstart, size_t size_to_alloc)
 	while (traversedbytes < pagedbytes)
 	{
 		j++;
-		this_block = (block_t *) ((char *) heapstart + traversedbytes);
+		this_block = (sblock_t *) ((char *) heapstart + traversedbytes);
 
-		while (traversedbytes + size_to_alloc + 16 > pagedbytes)
+		while (traversedbytes + size_to_alloc + 8 > pagedbytes)
 		{
 
 			if (traversedbytes + this_block->allocsize == pagedbytes)
@@ -63,7 +63,7 @@ void *add_alloc(void *heapstart, size_t size_to_alloc)
 						return (NULL);
 					temp_size = pagedbytes;
 					pagedbytes += pagesize;
-					next_block = (block_t *) ((char *) heapstart + pagedbytes);
+					next_block = (sblock_t *) ((char *) heapstart + pagedbytes);
 					next_block->inuse = ISFREE;
 					next_block->allocsize = pagesize;
 				}
@@ -74,15 +74,15 @@ void *add_alloc(void *heapstart, size_t size_to_alloc)
 				return (NULL);
 		}
 
-		if (this_block->inuse == ISFREE && this_block->allocsize >= size_to_alloc + 32)
+		if (this_block->inuse == ISFREE && this_block->allocsize >= size_to_alloc + 16)
 		{
 
 			temp_size = this_block->allocsize;
 			this_block->inuse = ISALLOC;
-			this_block->allocsize = size_to_alloc + 16;
-			next_block = (block_t *)((char *) this_block + this_block->allocsize);
+			this_block->allocsize = size_to_alloc + 8;
+			next_block = (sblock_t *)((char *) this_block + this_block->allocsize);
 			next_block->inuse = ISFREE;
-			next_block->allocsize = temp_size - (size_to_alloc + 16);
+			next_block->allocsize = temp_size - (size_to_alloc + 8);
 			i++;
 			return (this_block + 1);
 		}
