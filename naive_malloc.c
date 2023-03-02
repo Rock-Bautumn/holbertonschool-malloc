@@ -10,7 +10,7 @@
 size_t pagesize;
 static size_t pagedbytes = 0;
 
-void *_malloc(size_t size)
+void *naive_malloc(size_t size)
 {
 	static char isSetUp = FALSE;
 	static void *heapstart = NULL;
