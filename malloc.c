@@ -10,6 +10,12 @@
 size_t pagesize;
 static size_t pagedbytes = 0;
 
+/**
+ * _malloc - Returns an address in the heap
+ * @size: The size in bytes of how much space is needed in the allocation
+ * Return: A pointer of the allocated space, NULL if failed
+*/
+
 void *_malloc(size_t size)
 {
 	static char isSetUp = FALSE;
@@ -34,6 +40,13 @@ void *_malloc(size_t size)
 	retptr = add_alloc(heapstart, ROUND_UP(size));
 	return (retptr);
 }
+
+/**
+ * add_alloc - Creates an allocation in the heap
+ * @heapstart: The address of the 0th byte in the heap
+ * @size_to_alloc: The aligned size to allocate
+ * Return: Pointer to the allocated space, NULL if failed
+*/
 
 void *add_alloc(void *heapstart, size_t size_to_alloc)
 {
