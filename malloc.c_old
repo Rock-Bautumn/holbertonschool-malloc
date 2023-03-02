@@ -44,16 +44,24 @@ void *add_alloc(void *heapstart, size_t size_to_alloc)
 	static int i = 0;
 	int j = 0;
 
+	printf("heapstart = %p size_to_alloc = %ld\n", heapstart, size_to_alloc);
 	while (traversedbytes < pagedbytes)
 	{
+		printf("1 - j = %d\n", j);
 		j++;
 		this_block = (block_t *) ((char *) heapstart + traversedbytes);
+		printf("1.5 - this_block is at %p\n", (void *) this_block);
+		printf("1.5 - this_block->allocsize = %ld\n", this_block->allocsize);
+		printf("1.5 - this_block->inuse = %ld\n", this_block->inuse);
+		printf("sbrk(0) = %p\n", sbrk(0));
 
 		while (traversedbytes + size_to_alloc + 16 > pagedbytes)
 		{
+			printf("2\n");
 
 			if (traversedbytes + this_block->allocsize == pagedbytes)
 			{
+				printf("3\n");
 
 				if (this_block->inuse == ISFREE)
 					this_block->allocsize += pagesize;
@@ -68,14 +76,17 @@ void *add_alloc(void *heapstart, size_t size_to_alloc)
 					next_block->allocsize = pagesize;
 				}
 			}
+			printf("4\n");
 
 			pagedbytes += pagesize;
 			if (sbrk(pagesize) == (void *) -1)
 				return (NULL);
 		}
+		printf("5 - this_block->allocsize = %ld\n", this_block->allocsize);
 
 		if (this_block->inuse == ISFREE && this_block->allocsize >= size_to_alloc + 32)
 		{
+			printf("6\n");
 
 			temp_size = this_block->allocsize;
 			this_block->inuse = ISALLOC;
@@ -83,10 +94,16 @@ void *add_alloc(void *heapstart, size_t size_to_alloc)
 			next_block = (block_t *)((char *) this_block + this_block->allocsize);
 			next_block->inuse = ISFREE;
 			next_block->allocsize = temp_size - (size_to_alloc + 16);
+			printf("returning mem block (pagedbytes=%ld traversedbytes=%ld)\n", pagedbytes, traversedbytes);
+			printf("i=%d _malloc returned %p\n\n\n", i, (void *) (this_block + 1));
 			i++;
 			return (this_block + 1);
 		}
+		printf("6.5 traversedbytes = %ld and thisblock->allocsize = %ld\n", traversedbytes, this_block->allocsize);
 		traversedbytes += this_block->allocsize;
 	}
+	printf("7\n");
+	printf("!!! reached unexpected end!!! (pagedbytes=%ld traversedbytes=%ld)\n", pagedbytes, traversedbytes);
+	printf("i=%d _malloc returned %p\n\n\n", i, (void *) (this_block + 1));
 	return (NULL);
 }
