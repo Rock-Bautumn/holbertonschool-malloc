@@ -10,6 +10,12 @@
 size_t pagesize;
 static size_t pagedbytes = 0;
 
+/**
+ * naive_malloc - Creates an allocation in the heap and returns an address
+ * @size: The size requested by the calling function to allocate
+ * Return: The allocated address, NULL if failed
+*/
+
 void *naive_malloc(size_t size)
 {
 	static char isSetUp = FALSE;
@@ -35,6 +41,12 @@ void *naive_malloc(size_t size)
 	return (retptr);
 }
 
+/**
+ * add_alloc - Adds the allocation to the program data section that was extended
+ * @heapstart: This is where the heap section starts
+ * @size_to_alloc: the aligned size of the malloc requested by the calling function
+ * Return: The allocated address, NULL if failed
+*/
 void *add_alloc(void *heapstart, size_t size_to_alloc)
 {
 	size_t traversedbytes = 0;
@@ -48,13 +60,10 @@ void *add_alloc(void *heapstart, size_t size_to_alloc)
 	{
 		j++;
 		this_block = (sblock_t *) ((char *) heapstart + traversedbytes);
-
 		while (traversedbytes + size_to_alloc + 8 > pagedbytes)
 		{
-
 			if (traversedbytes + this_block->allocsize == pagedbytes)
 			{
-
 				if (this_block->inuse == ISFREE)
 					this_block->allocsize += pagesize;
 				else
@@ -68,15 +77,12 @@ void *add_alloc(void *heapstart, size_t size_to_alloc)
 					next_block->allocsize = pagesize;
 				}
 			}
-
 			pagedbytes += pagesize;
 			if (sbrk(pagesize) == (void *) -1)
 				return (NULL);
 		}
-
 		if (this_block->inuse == ISFREE && this_block->allocsize >= size_to_alloc + 16)
 		{
-
 			temp_size = this_block->allocsize;
 			this_block->inuse = ISALLOC;
 			this_block->allocsize = size_to_alloc + 8;
