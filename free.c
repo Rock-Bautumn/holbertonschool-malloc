@@ -7,7 +7,11 @@
 #define ALIGN 8
 
 
-
+/**
+ * _free - Frees a block previously allocated using _malloc()
+ * @ptr: The address of the allocated memory to free
+ * Return: EXIT_SUCCESS if success, EXIT_FAILURE if failed
+*/
 int _free(void *ptr)
 {
 	block_t *this_block;
